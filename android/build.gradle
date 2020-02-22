@@ -1,0 +1,46 @@
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.4'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven {
+            url "$projectDir/../node_modules/react-native/android"
+        }
+        google()
+        flatDir {
+            dirs "$projectDir/libs"
+        }
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "27.0.3"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    implementation 'com.facebook.react:react-native:+'
+    implementation fileTree(dir: 'libs', include: ['*.jar', 'PushIOManager*.aar'])
+//    implementation(name: 'PushIOManager-6.43.2', ext: 'aar')
+}
