@@ -1,0 +1,26 @@
+{
+  "name": "react-native-responsys",
+  "version": "0.0.1",
+  "description": "An honest react native project to bridge Oracle Responsys SDK.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juntossomosmais/react-native-responsys.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/juntossomosmais/react-native-responsys/issues"
+  },
+  "homepage": "https://github.com/juntossomosmais/react-native-responsys#readme",
+  "dependencies": {
+    "react": "^16.12.0",
+    "react-native": "^0.61.5"
+  }
+}
