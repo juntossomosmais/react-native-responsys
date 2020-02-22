@@ -23,12 +23,21 @@ TODO
 
 ## Useful links
 
+Regarding Oracle Responsys:
+
 - [Organization which has all repositories related to Oracle Marketing Cloud](https://github.com/pushio)
 - [Android SDK (Push IO Manager)](https://github.com/pushio/PushIOManager_Android)
 - [Everything related to Android integration](https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCFB/android/)
 - [iOS SDK (Push IO Manager)](https://github.com/pushio/PushIOManager_iOS)
 - [Everything related to iOS integration](https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCFB/ios/)
-- [How to send push notification via back-end](https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCFA/api/)
+
+Native Module:
+
+- [Modules for iOS](https://facebook.github.io/react-native/docs/native-modules-ios)
+- [Modules for Android](https://facebook.github.io/react-native/docs/native-modules-android)
+- [Swift in React Native - The Ultimate Guide Part 1: Modules](https://teabreak.e-spres-oh.com/swift-in-react-native-the-ultimate-guide-part-1-modules-9bb8d054db03)
+
+
 
 ## Important notice
 
