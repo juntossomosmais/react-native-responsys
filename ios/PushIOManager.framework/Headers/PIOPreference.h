@@ -2,7 +2,7 @@
 //  PIOPreference.h
 //  PushIOManager
 //
-//  Copyright © 2009-2017 Oracle. All rights reserved.
+//  Copyright (c) 2018 Oracle Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>

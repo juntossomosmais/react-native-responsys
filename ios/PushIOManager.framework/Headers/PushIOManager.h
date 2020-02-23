@@ -2,7 +2,7 @@
 //  PushIOManager.h
 //  PushIOManager
 //
-//  Copyright © 2009-2017 Oracle. All rights reserved.
+//  Copyright (c) 2018 Oracle Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
@@ -23,7 +23,7 @@ FOUNDATION_EXPORT NSString * const PIOMCRawResponseValue;
 FOUNDATION_EXPORT NSString * const PIOMCRequestURL;
 
 
-
+@class PIOMCMessage;
 /**-----------------------------------------------------------------------------
  * @name Metadata Handler APIs
  * -----------------------------------------------------------------------------
@@ -105,39 +105,23 @@ FOUNDATION_EXPORT NSString * const PIOMCRequestURL;
 
 @end
 
-
-/**
- @deprecated This method is deprecated starting from version 6.32.0
- @note Please use @code PIOLogLevel @endcode instead.
- 
- Help setting the logging level for PushIOManager - the default is "ERRORS_ONLY"
- 
- - PUSHIO_DEBUG_NONE:        disable debug.
- - PUSHIO_DEBUG_ERRORS_ONLY: debug error only.
- - PUSHIO_DEBUG_ACTIVITY:    debug activities.
- - PUSHIO_DEBUG_VERBOSE:     debug verbose.
- */
-__attribute__((deprecated)) typedef enum {
-    PUSHIO_DEBUG_NONE = 0,
-    PUSHIO_DEBUG_ERRORS_ONLY = 1,
-    PUSHIO_DEBUG_ACTIVITY = 2,
-    PUSHIO_DEBUG_VERBOSE = 3
-}PushIODebugLevel;
-
-
 /**
  Help setting the logging level for PushIOManager.
  
- - PIOLogLevelNone:     Log level none
- - PIOLogLevelError:    Log level Error only.
- - PIOLogLevelWarn:     Log level warnings.
- - PIOLogLevelInfo:     Log level informative.
+ - PIOLogLevelNone:       Log level showing no logs.
+ - PIOLogLevelError:      Log level showing only errors.
+ - PIOLogLevelWarn:       Log level showing errors and warnings.
+ - PIOLogLevelInfo:       Log level showing informational messages, errors and warnings (default).
+ - PIOLogLevelDebug:      Log level showing debugging statements intended for app developers, informational messages, errors and warnings.
+ - PIOLogLevelVerbose:    Log level showing debugging statements intended for SDK developers & app developers, informational messages, errors and warnings.
  */
 typedef NS_ENUM(NSInteger, PIOLogLevel) {
     PIOLogLevelNone = 0,
     PIOLogLevelError = 1,
     PIOLogLevelWarn = 2,
-    PIOLogLevelInfo = 3
+    PIOLogLevelInfo = 3,
+    PIOLogLevelDebug = 4,
+    PIOLogLevelVerbose = 5
 };
 
 
@@ -171,6 +155,7 @@ typedef enum {
     PUSHIO_ENGAGEMENT_METRIC_SOCIAL = 4,
     PUSHIO_ENGAGEMENT_METRIC_ACTION = 5, // Push IO internal use
     PUSHIO_ENGAGEMENT_METRIC_OTHER = 6, // Push IO internal use
+    PUSHIO_ENGAGEMENT_METRIC_PURCHASE = 7, // Push IO internal use
 }PushIOEngagementMetrics;
 
 
@@ -191,8 +176,31 @@ typedef NS_ENUM(NSInteger, PIOErrorCode) {
     PIOErrorCodeMaximumRetryReached,
     PIOErrorCodeInvalidURL,
     PIOErrorCodeInvalidPayload,
-    PIOErrorCodeEmptyResponse
+    PIOErrorCodeEmptyResponse,
+    PIOErrorCodePurchaseNotSupported,
+    PIOErrorCodeConversionInfoNotAvailable
 };
+
+
+//Multiple Inbox Error Domains
+
+FOUNDATION_EXPORT NSString * const PIOErrorDomainMCFailure;
+
+FOUNDATION_EXPORT NSString * const PIOErrorDomainHTTPFailure;
+
+/**
+ Multiple Inbox error codes
+ 
+ - PIOHTTTPStatusCodeInvalidAppOrAccountToken:Invalid Account Token/Invalid App Token
+ - PIOHTTTPStatusCodeMCFailure:Message Center not enabled for App/Not RI-App(not migrated App)/
+ Invalid message center/Message Center deleted
+ - PIOHTTTPStatusCodeMCDisabled:Message Center Feature disabled at RI pod/account
+ */
+
+#define PIOHTTTPStatusCodeInvalidAppOrAccountToken  400
+#define PIOHTTTPStatusCodeMCFailure                 404
+#define PIOHTTTPStatusCodeMCDisabled                403
+
 
 /**
  Callback used for asynchronous communication between application and PushIO SDK.
@@ -211,6 +219,14 @@ typedef void (^PIOCompletionHandler)(NSError *error, NSString *response);
  */
 typedef void (^PIOMessageCenterCompletionHandler)(NSError *error, NSArray *messages);
 
+/**
+ Messages richcontent callback used to fetch the rich content for the application.
+ 
+ @param error       Placeholder to populate the error code/reason when operation completed.
+ @param messageID   Rich content requested message indentifier.
+ @param richContent Richcontent fetched from server.
+ */
+typedef void (^PIOMessageCenterRichcontentCompletionHandler)(NSError *error, NSString *messageID, NSString *richContent);
 
 /**
  Block (callback) to provide extra event properties at run time.
@@ -300,14 +316,6 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
 
 /**
  @deprecated This method is deprecated starting from version 6.32.0
- @note Please use @code setLogLevel: @endcode instead.
- 
- debugLevel enable different stage of logging with possible values: PUSHIO_DEBUG_NONE, PUSHIO_DEBUG_ERRORS_ONLY,PUSHIO_DEBUG_ACTIVITY, PUSHIO_DEBUG_VERBOSE.
- */
-@property (nonatomic, assign) PushIODebugLevel debugLevel __attribute__((deprecated));
-
-/**
- @deprecated This method is deprecated starting from version 6.32.0
  @note Please use registration method with completionHandler and error placeholder as parameter instead.
  
  'PushIOManagerDelegate' keeps application informed about the status of registration as:
@@ -323,6 +331,26 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
  */
 @property (nonatomic, assign) BOOL registrationStored;
 
+
+/**
+ Defines the behavior when user interact with the hyperlink inside inApp message view.
+ Default is set to NO.
+ If set YES, pub-web hyperlinks are resolved and deeplink url, web url is notified to the application by notification boradcast to `PIORsysWebURLResolvedNotification`.
+ If set NO, user redirected to safari when s/he interact with hyper link.
+ */
+@property (nonatomic, assign) BOOL executeRsysWebURL;
+
+
+/**
+ Notification constant to notify the application with resolved pub web information.
+ */
+FOUNDATION_EXPORT NSString * const PIORsysWebURLResolvedNotification;
+
+FOUNDATION_EXPORT NSString * const PIOResolvedDeeplinkURL;
+FOUNDATION_EXPORT NSString * const PIOResolvedWeblinkURL;
+FOUNDATION_EXPORT NSString * const PIORequestedWebURL;
+FOUNDATION_EXPORT NSString * const PIOErrorResolveWebURL;
+FOUNDATION_EXPORT NSString * const PIORequestedWebURLIsPubWebType;
 
 /**
  Allows the application to specify an External Device Tracking ID.
@@ -372,18 +400,30 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
 
 
 /**
+ @deprecated This method is deprecated starting from version 6.33.0
+ @note Please use @code setLoggingEnabled: instead.
  Start printing log in debug console. Different level of logging can be enabled with this.
  
  @param enable determines if SDK needs to enable logging.
  
  */
-- (void) enableLogging:(BOOL)enable;
+- (void) enableLogging:(BOOL)enable __attribute__((deprecated));
 
 
 /**
- Stop printing log in debug console.
+ Enable/Disable logging. By default logging is enabled with default PIOLogLevelInfo. Developer can change the log level by calling setLogLevel method.
+
+ @param enable If `YES`, enable console log printing. If `NO`, disable console log printing.
  */
-- (void) disableLogging;
+- (void) setLoggingEnabled:(BOOL)enable;
+
+/**
+ @deprecated This method is deprecated starting from version 6.33.0
+ @note Please use @code setLoggingEnabled: instead.
+ 
+ Stop console log printing.
+ */
+- (void) disableLogging __attribute__((deprecated));
 
 
 /**
@@ -409,6 +449,9 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
 
 
 /**
+ @deprecated This method is deprecated starting from version 6.41.0
+ @note Please use @code configureWithFileName: @endcode or @code configureWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken conversionUrl:(NSString *)conversionUrl riAppId:(NSString *)riAppId accountName:(NSString *)accountName  completionHandler:(PIOCompletionHandler)completionHandler: @endcode instead.
+
  Validates the key against the current configuration and makes SDK ready for registration for valid API-Key.
  
  @param apiKey       generated in RI portal and used to configure SDK.
@@ -417,7 +460,22 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
  
  @return TRUE if SDK configured successfully (or provided APIKey is valid), FALSE otherwise.
  */
-- (BOOL)configureWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken error:(NSError *__autoreleasing *)error;
+- (BOOL)configureWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken error:(NSError *__autoreleasing *)error __attribute__((deprecated));
+
+
+/**
+ @deprecated This method is deprecated starting from version 6.41.0
+ @note Please use @code configureWithFileName: @endcode or @code configureWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken conversionUrl:(NSString *)conversionUrl riAppId:(NSString *)riAppId accountName:(NSString *)accountName  completionHandler:(PIOCompletionHandler)completionHandler: @endcode instead.
+
+ Configure the application and register with server, for given APIKey and AccountToken.
+ 
+ @param apiKey       generated in RI portal and used to configure SDK.
+ @param accountToken generated in RI portal and used to configure SDK.
+ @param completionHandler        Called when application finish registration.
+ 
+ @return TRUE if SDK configured successfully (or provided APIKey is valid), FALSE otherwise. Registration status communicated through completion handler.
+ */
+- (BOOL)configureAndRegisterWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken completionHandler:(PIOCompletionHandler)completionHandler __attribute__((deprecated));
 
 
 /**-----------------------------------------------------------------------------
@@ -524,7 +582,17 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
  
  @param metric type of engagement to track i.e.: launch, active,iam,premium,social,action etc.
  */
-- (void)trackEngagementMetric:(PushIOEngagementMetrics)metric;
+- (void) trackEngagementMetric:(PushIOEngagementMetrics)metric;
+
+
+/**
+ Tracks the engagement for the provided engagement metric type with additional properties
+
+ @param metric Engagement metric.
+ @param properties Engagement metric properties.
+ @param completionHandler CompletionHandler.
+ */
+- (void) trackEngagementMetric:(PushIOEngagementMetrics)metric withProperties:(NSDictionary *)properties completionHandler:(PIOCompletionHandler)completionHandler;
 
 
 /**-----------------------------------------------------------------------------
@@ -598,6 +666,25 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
              forRemoteNotification:(NSDictionary *)userInfo
                  completionHandler:(void (^)(void))completionHandler;
 
+
+/**
+ Method meant to be invoked from the application delegate's `handleActionWithIdentifier: forRemoteNotification: withResponseInfo: completionHandler:`. When the PushIOManager version is called, the userInfo push dictionary will be processed, an engagement will be triggered, and the completion handler called.
+ 
+ @param identifier        identifier.
+ @param userInfo          remote notification information.
+ @param responseInfo      notification response information.
+ @param completionHandler completionHandler.
+ */
+-(void) handleActionWithIdentifier:(NSString *)identifier forRemoteNotification:(NSDictionary *)userInfo withResponseInfo:(NSDictionary *)responseInfo completionHandler:(void (^)(void))completionHandler;
+
+
+/**
+ When application invoked from the URL and it want SDK to resove the URL.
+
+ @param userActivity containing userActivity information.
+ @param restorationHandler restorationHandler. NOTE: It's only used for SDK internal purpose. Application still need to call it to complete the userActicity.
+ */
+- (void)continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray *))restorationHandler;
 
 
 /**-----------------------------------------------------------------------------
@@ -833,6 +920,27 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
  */
 - (void)setOverrideAccountToken:(NSString *)overrideAccountToken __attribute__((deprecated));
 
+/**
+ @deprecated This method is deprecated starting from version 6.41.0
+ @note Please use @code configureWithFileName: @endcode or @code configureWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken conversionUrl:(NSString *)conversionUrl riAppId:(NSString *)riAppId accountName:(NSString *)accountName  completionHandler:(PIOCompletionHandler)completionHandler: @endcode instead.
+
+ Copy the value of `conversionUrl` from config.json, and pass it in this method. It's better to provide coversionURL as part of setup, it will avoid drop-reporting.
+
+ @param conversionURL URL value of `conversionUrl` from config.json.
+ */
+- (void)setConversionURL:(NSURL *)conversionURL __attribute__((deprecated));
+
+
+/**
+ @deprecated This method is deprecated starting from version 6.41.0
+ @note Please use @code configureWithFileName: @endcode or @code configureWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken conversionUrl:(NSString *)conversionUrl riAppId:(NSString *)riAppId accountName:(NSString *)accountName  completionHandler:(PIOCompletionHandler)completionHandler: @endcode instead.
+
+ Copy the value of `riAppId` from config.json, and pass it in this method. It's better to provide RIAppID as part of SDK setup, it will avoid drop-reporting.
+
+ @param riAppID RIAppID value of `riAppId` from config.json
+ */
+- (void)setRIAppID:(NSString *)riAppID __attribute__((deprecated));
+
 
 /**
  A unique ID used by SDK to configure the application.
@@ -913,8 +1021,6 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
  */
 @property (nonatomic, readonly) NSString *lastPushURLString;
 
-#if defined(__IPHONE_10_0) && __IPHONE_OS_VERSION_MAX_ALLOWED >= __IPHONE_10_0
-
 
 /**-----------------------------------------------------------------------------
  * @name iOS10 Notification Methods
@@ -925,7 +1031,7 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
 /**
  Asks user permissions for provided notifications types i.e.: Sound/Badge/Alert types.
  If readyForRegistrationCompHandler is not set, then provided completionHandler is assigned to it, to let application have access when SDK receives deviceToken.
- 
+ NOTE: Need to call from iOS10+.
  @param authOptions Notification auth types i.e.: Sound/Badge/Alert
  @param categories Contains the notification categories definitions.
  @param completionHandler callback with response for notification permission prompt.
@@ -944,8 +1050,7 @@ typedef NSDictionary* (^PIOGlobalPropertiesBlock)(NSDictionary *event);
  */
 -(void) userNotificationCenter:(UNUserNotificationCenter *)center
 didReceiveNotificationResponse:(UNNotificationResponse *)response
-         withCompletionHandler:(void(^)())completionHandler;
-
+         withCompletionHandler:(void(^)(void))completionHandler;
 
 
 /**
@@ -960,9 +1065,11 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
        willPresentNotification:(UNNotification *)notification
          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler;
 
-#else
 
 /**
+ @deprecated This method is deprecated starting from version 6.40.1
+ @note Please use @code registerForNotificationAuthorizations: @endcode instead.
+
  Asks user to provide the permissions for provided notifications types i.e.: Sound/Badge/Alert types.
  If readyForRegistrationCompHandler is not set, then provided completionHandler is assigned to it, to let application have access when SDK receives deviceToken.
  
@@ -971,20 +1078,22 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
  @param completionHandler callback with response for notification permission prompt.
  
  */
--(void) registerForNotificationTypes:(UIUserNotificationType)notificationType categories:(NSArray *)categories completionHandler:(PIOCompletionHandler)completionHandler;
+-(void) registerForNotificationTypes:(UIUserNotificationType)notificationType categories:(NSArray *)categories completionHandler:(PIOCompletionHandler)completionHandler __attribute__((deprecated));
 
 
 /**
+ @deprecated This method is deprecated starting from version 6.40.1
+ 
  Method to be invoked from the application delegate's `didRegisterUserNotificationSettings:` method.
  
  @param notificationSettings updated notification settings
  */
--(void) didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings;
+-(void) didRegisterUserNotificationSettings:(UIUserNotificationSettings *)notificationSettings __attribute__((deprecated));
 
-#endif
 
 
 //MARK: Message Center Methods
+
 
 /**
  Fetch the list of Message Center messages for given MessageCenter name.
@@ -993,5 +1102,168 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
  @param completionHandler Callback to notify when operation complete.
  */
 -(void) fetchMessagesForMessageCenter:(NSString *)messageCenter CompletionHandler:(PIOMessageCenterCompletionHandler)completionHandler;
+
+
+/**
+ Fetch the rich content for the given message instance.
+
+ @param messageID of message to identify the rich content.
+ @param completionHandler Callback to notify when rich content fetch complete.
+ */
+-(void)fetchRichContentForMessage:(NSString *)messageID CompletionHandler:(PIOMessageCenterRichcontentCompletionHandler)completionHandler;
+
+/**
+ Reset all SDK data. i.e.: DeviceID, UserId, Preferences.
+ */
+-(void) resetAllData;
+
+
+/**
+ Reset all engagement information (to nil). No more engagement will be reported after calling this method until: either new push notification received or application is invoked from the email.
+ */
+-(void) resetEngagementContext;
+
+
+/**
+ Return the string value (date ISO 8601 format), recorded when engagement information fetched from server and stored locally.
+
+ @return String value of engagement date,time in ISO 8601 format. Return nil if no engagement information fetched or `resetEngagementContext()` called.
+ */
+-(NSString *) getEngagementTimeStamp;
+
+
+/**
+ 
+
+ @return double value of server returned max age value (when application invoked from email). Return -1 if no max age (from server) fetched or `resetEngagementContext()` called.
+ */
+-(double) getEngagementMaxAge;
+
+/**
+ Enable the fetch messages for all message center names from the server. Generally SDK fetches the updated messages when application starts, so `didFinishLaunchingWithOptions` is the correct place to call it.
+
+ @param enableMessageCenter boolean value to enable the messages fetch.
+ */
+-(void) setMessageCenterEnabled:(BOOL)enableMessageCenter;
+
+
+/**
+Returns the status of MessageCenter enabled.
+
+ @return YES if message center enabled, NO if not enabled. By default it's NO defined by SDK.
+ */
+-(BOOL) isMessageCenterEnabled;
+
+/**
+ Tells about if the SDK is configured successfully.
+
+ @return Return TRUE if configured, FASLE otherwise.
+ */
+-(BOOL)isSDKConfigured;
+
+
+/**
+ Enable the crah logging of PushIO sdk. It will not make and capture any crashes of apps. By default it is enable. You can set `NO` if you do not want PushIO sdk to collect crashes.
+ 
+ @param enableCrashLogging boolean value to enable the crash logging.
+ */
+- (void)setCrashLoggingEnabled:(BOOL)enableCrashLogging;
+
+
+/**
+ Check if crash logging is enabled for PushIO SDk. We capture only crashes related to sdk.
+ 
+ @return TRUE if crash logging is enabled for PushIO sdk, FALSe otherwise.
+ */
+- (BOOL)isCrashLoggingEnabled;
+
+
+/**
+ Enable/Disable the in-app messages prefetch. If enabled, all the in-app messages are prefetch and stored in the SDK, and triggered from local storage. If disabled then in-app messages are not prefetched, so not available to be triggered for the event i.e.: $ExplicitAppOpen.
+
+ @param enableInAppMessageFetch TRUE to enable in-App messages prefetch, FALSE to disable it.
+ */
+- (void)setInAppMessageFetchEnabled:(BOOL)enableInAppMessageFetch;
+
+
+/**
+ Configures the SDK using the provided config json file name.
+
+ @param configFileName Name of the json config file. It is of the format - {account_name_}pushio_config.json
+ @param completionHandler Callback to notify the result of configuration.
+ */
+- (void)configureWithFileName:(NSString *)configFileName completionHandler:(PIOCompletionHandler)completionHandler;
+
+
+/**
+  Configures the Responsys SDK.
+ 
+  @param apiKey API Key provided by responsys platform.
+  @param accountToken Account token provided by responsys platform.
+  @param conversionUrl Conversion url for tracking Email-to-App conversions.
+  @param riAppId App ID as displayed in Responsys Interact Mobile App Console.
+  @param accountName Account name used for logging in to Responsys Interact portal
+  @param completionHandler Callback to notify the result of configuration.
+ */
+- (void)configureWithAPIKey:(NSString *)apiKey accountToken:(NSString *)accountToken conversionUrl:(NSString *)conversionUrl riAppId:(NSString *)riAppId accountName:(NSString *)accountName  completionHandler:(PIOCompletionHandler)completionHandler;
+
+
+/**
+ Removes all Message center messages. Use this api only switching the configurations  i.e with `configure` API's.
+ */
+- (void)clearMessageCenterMessages;
+
+
+/**
+ Removes all InApp messages. Use these api only switching the configurations i.e with `configure` API's
+ */
+- (void)clearInAppMessages;
+
+
+/**
+ Set the application badge count and also sync with server. In case of error while syncing badge count will not be set.
+ 
+ @param badgeCount count needed to set on app icon.
+ @param completionHandler Callback to notify when badge count set operation completes.
+ */
+- (void)setBadgeCount:(NSInteger)badgeCount completionHandler:(PIOCompletionHandler)completionHandler;
+
+/**
+ Reset the application badge count to 0 and also sync with server. In case of error while syncing badge count will not be reset. This api will remove the badge count icon from app icon.
+ 
+ @param completionHandler Callback to notify when reset badge count operation completes.
+ */
+- (void)resetBadgeCountWithCompletionHandler:(PIOCompletionHandler)completionHandler;
+
+/**
+ Return the current local badge count of app.
+ 
+ @return Return the badge count value.
+ */
+- (NSInteger)getBadgeCount;
+
+/**
+ Checks if the push payload provided is sent by Responsys platform or not.
+ @param userInfo accepts the userinfo dictionary.
+
+ @return TRUE if push payload is sent by Responsys platform otherwise FALSE.
+ */
+- (BOOL)isResponsysPayload:(NSDictionary *)userInfo;
+
+/**
+ Checks if the push notification provided is sent by Responsys platform or not.
+ @param notification accepts the notification.
+
+ @return TRUE if push payload is sent by Responsys platform otherwise FALSE.
+ */
+- (BOOL)isResponsysNotificaton:(UNNotification *)notification;
+
+/**
+ Checks if the push notification response provided is sent by Responsys platform or not.
+ @param response accepts the notification response.
+ 
+ @return TRUE if push payload is sent by Responsys platform otherwise FALSE.
+ */
+- (BOOL)isResponsysNotificationResponse:(UNNotificationResponse *)response;
 
 @end

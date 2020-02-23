@@ -2,12 +2,14 @@
 //  PushIOManager+PushIOLocation.h
 //  PushIOManager
 //
-//  Copyright © 2009-2017 Oracle. All rights reserved.
+//  Copyright (c) 2018 Oracle Inc. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import <CoreLocation/CoreLocation.h>
 #import "PushIOManager.h"
+#import "PIOGeoRegion.h"
+#import "PIOBeaconRegion.h"
 
 /** PushIOLocationError enum defines the possible errors to inform application.
  *
@@ -74,6 +76,42 @@ typedef NS_ENUM(NSUInteger, PushIOLocationError){
  *
  */
 - (void)setDistanceFilter:(CLLocationDistance)distanceFilter;
+
+
+/**
+ Method to be invoked when enters in Geofence Region.
+ 
+ @param region       Geofence region details needed to pass to sdk.
+ @param completionHandler       Callback to notify when operation complete.
+ */
+- (void)didEnterGeoRegion:(PIOGeoRegion *)region completionHandler:(PIOCompletionHandler)completionHandler NS_SWIFT_NAME(didEnter(region:_:));
+
+
+/**
+ Method to be invoked when when exits from Geofence Region.
+
+ @param region       Geofence region details needed to pass to sdk.
+ @param completionHandler       Callback to notify when operation complete.
+ */
+- (void)didExitGeoRegion:(PIOGeoRegion *)region completionHandler:(PIOCompletionHandler)completionHandler NS_SWIFT_NAME(didExit(region:_:));
+
+
+/**
+ Method to be invoked when when enters in Beacon Region.
+ 
+ @param region       Beacon region details needed to pass to sdk.
+ @param completionHandler       Callback to notify when operation complete.
+ */
+- (void)didEnterBeaconRegion:(PIOBeaconRegion *)region completionHandler:(PIOCompletionHandler)completionHandler NS_SWIFT_NAME(didEnter(region:_:));
+
+
+/**
+ Method to be invoked when when exits from Beacon Region.
+ 
+ @param region       Beacon region details needed to pass to sdk.
+ @param completionHandler       Callback to notify when operation complete.
+ */
+- (void)didExitBeaconRegion:(PIOBeaconRegion *)region completionHandler:(PIOCompletionHandler)completionHandler NS_SWIFT_NAME(didExit(region:_:));
 
 
 @end
