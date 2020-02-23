@@ -13,13 +13,13 @@ public class RNResponsysBridgeModule extends ReactContextBaseJavaModule {
         this.reactContext = reactContext;
     }
 
+    private PushIOManager getPushIOManager() {
+        return PushIOManager.getInstance(getReactApplicationContext());
+    }
+
     @Override
     public String getName() {
         return "RNResponsysBridge";
-    }
-
-    private PushIOManager getPushIOManager() {
-        return PushIOManager.getInstance(getReactApplicationContext());
     }
 
     @ReactMethod
