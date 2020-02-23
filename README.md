@@ -37,7 +37,15 @@ Native Module:
 - [Modules for Android](https://facebook.github.io/react-native/docs/native-modules-android)
 - [Swift in React Native - The Ultimate Guide Part 1: Modules](https://teabreak.e-spres-oh.com/swift-in-react-native-the-ultimate-guide-part-1-modules-9bb8d054db03)
 
+## How to setup your development environment
 
+You should use Node v12.13.1
+
+After downloading this project, you can execute in the root folder:
+
+    npm install
+    
+After it, using IntelliJ open the folder [android](android) to start to work. For iOS is the same logic, using AppCode open the folder [ios](ios).
 
 ## Important notice
 
