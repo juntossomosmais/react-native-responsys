@@ -6,11 +6,11 @@ An honest react native project to bridge Oracle Responsys SDK.
 
 First install this native module:
 
-    npm install react-native-responsys
+    npm install @juntossomosmais/react-native-responsys
     
 Now you can link it to your project. Do the following:
 
-    react-native link react-native-responsys
+    react-native link @juntossomosmais/react-native-responsys
 
 In order to use it, you must follow Oracle guide to configure either for Android and iOS:
 
