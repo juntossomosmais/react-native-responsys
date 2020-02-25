@@ -13,6 +13,12 @@ const ResponsysBridge = {
   configureDeviceToken: function (deviceToken) {
     RNResponsysBridge.setDeviceToken('' + deviceToken)
   },
+  registerApp: function (useLocation) {
+    RNResponsysBridge.registerApp(deviceToken)
+  },
+  retrieveDeviceId: function () {
+    return RNResponsysBridge.getDeviceId()
+  },
 }
 
 export default ResponsysBridge
