@@ -8,9 +8,25 @@ First install this native module:
 
     npm install @juntossomosmais/react-native-responsys
     
-Now you can link it to your project. Do the following:
+React Native does automatic linking from 0.60 version onwards, but if you're using an older version, then do the following:
 
     react-native link @juntossomosmais/react-native-responsys
+    
+### iOS
+
+TODO.
+
+### Android
+
+1. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
+    ```
+      implementation project(':juntossomosmais_react-native-responsys')
+    ```
+2. Open up `android/app/src/main/java/[...]/MainActivity.java`
+  - Add `import br.com.juntossomosmais.reactnative.responsys.RNResponsysBridgePackage;` to the imports at the top of the file
+  - Add `new RNResponsysBridgePackage()` to the list returned by the `getPackages()` method
+
+### Oracle Setup
 
 In order to use it, you must follow Oracle guide to configure either for Android and iOS:
 
@@ -19,7 +35,7 @@ In order to use it, you must follow Oracle guide to configure either for Android
 
 ## How to receive push notifications 
 
-TODO
+TODO.
 
 ## Useful links
 

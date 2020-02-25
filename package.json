@@ -1,6 +1,6 @@
 {
   "name": "@juntossomosmais/react-native-responsys",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "An honest react native project to bridge Oracle Responsys SDK.",
   "main": "index.js",
   "directories": {
@@ -19,7 +19,7 @@
     "url": "https://github.com/juntossomosmais/react-native-responsys/issues"
   },
   "homepage": "https://github.com/juntossomosmais/react-native-responsys#readme",
-  "dependencies": {
+  "peerDependencies": {
     "react": "^16.12.0",
     "react-native": "^0.61.5"
   },
