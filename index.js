@@ -10,6 +10,9 @@ const ResponsysBridge = {
   trackEvent: function (eventName) {
     RNResponsysBridge.trackEvent(eventName)
   },
+  configureDeviceToken: function (deviceToken) {
+    RNResponsysBridge.setDeviceToken('' + deviceToken)
+  },
 }
 
 export default ResponsysBridge

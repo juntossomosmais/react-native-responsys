@@ -31,4 +31,9 @@ public class RNResponsysBridgeModule extends ReactContextBaseJavaModule {
     public void trackEvent(String event) {
         getPushIOManager().trackEvent(event);
     }
+
+    @ReactMethod
+    public void setDeviceToken(String deviceToken) {
+        getPushIOManager().setDeviceToken(deviceToken);
+    }
 }

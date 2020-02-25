@@ -61,4 +61,18 @@ public class RNResponsysBridgeModuleTest {
 
         verify(mockPushIOManager).trackEvent(someEvent);
     }
+
+    @Test
+    public void shouldSetDeviceToken() {
+        RNResponsysBridgeModule bridge = new RNResponsysBridgeModule(mock(ReactApplicationContext.class));
+
+        mockStatic(PushIOManager.class);
+        PushIOManager mockPushIOManager = mock(PushIOManager.class);
+        when(PushIOManager.getInstance(any())).thenReturn(mockPushIOManager);
+
+        String someToken = "some-token";
+        bridge.setDeviceToken(someToken);
+
+        verify(mockPushIOManager).setDeviceToken(someToken);
+    }
 }
