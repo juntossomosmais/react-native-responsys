@@ -33,9 +33,25 @@ In order to use it, you must follow Oracle guide to configure either for Android
 - [Steps to configure your Android project](https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCFB/android/step-by-step/)
 - [Steps to configure your iOS project](https://docs.oracle.com/cloud/latest/marketingcs_gs/OMCFB/ios/step-by-step/)
 
-## How to receive push notifications 
+## How to receive push notifications
 
-TODO.
+In case you have multiple push SDKs (sample with Firebase Messaging):
+
+```javascript
+import firebase from 'react-native-firebase'
+import ResponsysBridge from '@juntossomosmais/react-native-responsys';
+
+const messaging = firebase.messaging()
+
+messaging.getToken().then(token => {
+  ResponsysBridge.configureDeviceToken(token)
+  ResponsysBridge.registerApp(false)
+}).catch(e => {
+  console.error(`Something went wrong with your setup: ${e}`)
+})
+```
+
+This will show the PN at least from `logcat`. More details will come soon.
 
 ## Useful links
 
