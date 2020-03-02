@@ -18,6 +18,8 @@ TODO.
 
 ### Android
 
+If your are using a version older than 0.60, then follow the steps:
+
 1. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
     ```
       implementation project(':juntossomosmais_react-native-responsys')
@@ -25,6 +27,26 @@ TODO.
 2. Open up `android/app/src/main/java/[...]/MainActivity.java`
   - Add `import br.com.juntossomosmais.reactnative.responsys.RNResponsysBridgePackage;` to the imports at the top of the file
   - Add `new RNResponsysBridgePackage()` to the list returned by the `getPackages()` method
+
+---
+
+Add the following in your `AndroidManifest.xml`:
+
+```xml
+    .....
+    <!-- Do not forget to follow Oracle Responsys documentation regarding permissions -->
+    .....
+    <application ....>
+        <!-- Do not forget to follow Oracle Responsys documentation -->
+        <service
+            android:name="br.com.juntossomosmais.reactnative.responsys.RNResponsysBridgeListenerService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+     .....
+```
 
 ### Oracle Setup
 
@@ -45,13 +67,21 @@ const messaging = firebase.messaging()
 
 messaging.getToken().then(token => {
   ResponsysBridge.configureDeviceToken(token)
-  ResponsysBridge.registerApp(false)
+  const useLocation = false
+  ResponsysBridge.registerApp(useLocation)
 }).catch(e => {
   console.error(`Something went wrong with your setup: ${e}`)
 })
 ```
 
-This will show the PN at least from `logcat`. More details will come soon.
+Or simply:
+
+```javascript
+import ResponsysBridge from '@juntossomosmais/react-native-responsys';
+
+const useLocation = false
+ResponsysBridge.registerApp(useLocation)
+```
 
 ## Useful links
 

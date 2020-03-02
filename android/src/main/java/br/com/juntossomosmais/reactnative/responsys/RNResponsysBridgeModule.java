@@ -8,17 +8,25 @@ import com.facebook.react.bridge.ReactMethod;
 import com.pushio.manager.PushIOManager;
 
 public class RNResponsysBridgeModule extends ReactContextBaseJavaModule {
+    private PushIOManager pushIOManager = null;
 
     public RNResponsysBridgeModule(ReactApplicationContext reactContext) {
         super(reactContext);
     }
 
     private PushIOManager getPushIOManager() {
-        if (isEmulator()) {
-            PushIOManager.setLoggingEnabled(true);
-            PushIOManager.setLogLevel(Log.VERBOSE);
+        if (pushIOManager != null)
+            return pushIOManager;
+        synchronized (this) {
+            if (pushIOManager == null) {
+                if (isEmulator()) {
+                    PushIOManager.setLoggingEnabled(true);
+                    PushIOManager.setLogLevel(Log.VERBOSE);
+                }
+                pushIOManager = PushIOManager.getInstance(getReactApplicationContext());
+            }
         }
-        return PushIOManager.getInstance(getReactApplicationContext());
+        return pushIOManager;
     }
 
     private boolean isEmulator() {
@@ -61,7 +69,7 @@ public class RNResponsysBridgeModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void registerApp(boolean useLocation){
+    public void registerApp(boolean useLocation) {
         getPushIOManager().registerApp(useLocation);
     }
 
