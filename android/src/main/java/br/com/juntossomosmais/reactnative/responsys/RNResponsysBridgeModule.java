@@ -77,4 +77,9 @@ public class RNResponsysBridgeModule extends ReactContextBaseJavaModule {
     public String getDeviceId() {
         return getPushIOManager().getDeviceId();
     }
+
+    @ReactMethod
+    public String getUserId() {
+        return getPushIOManager().getRegisteredUserId();
+    }
 }
