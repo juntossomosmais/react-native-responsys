@@ -1,27 +1,27 @@
-import { NativeModules } from 'react-native';
+import { NativeModules } from 'react-native'
 
-const { RNResponsysBridge } = NativeModules;
+const { RNResponsysBridge } = NativeModules
 
 const ResponsysBridge = {
   registerUserId: function (userId) {
     // Convert to string to prevent iOS conversion error
-    RNResponsysBridge.registerUserId('' + userId);
+    RNResponsysBridge.registerUserId('' + userId)
   },
   trackEvent: function (eventName) {
-    RNResponsysBridge.trackEvent(eventName);
+    RNResponsysBridge.trackEvent(eventName)
   },
   configureDeviceToken: function (deviceToken) {
-    RNResponsysBridge.setDeviceToken('' + deviceToken);
+    RNResponsysBridge.setDeviceToken('' + deviceToken)
   },
   registerApp: function (useLocation = false) {
-    RNResponsysBridge.registerApp(useLocation);
+    RNResponsysBridge.registerApp(useLocation)
   },
   retrieveDeviceId: function () {
-    return RNResponsysBridge.getDeviceId();
+    return RNResponsysBridge.getDeviceId()
   },
   retrieveUserId: function () {
-    return RNResponsysBridge.getUserId();
+    return RNResponsysBridge.getUserId()
   },
-};
+}
 
-export default ResponsysBridge;
+export default ResponsysBridge
