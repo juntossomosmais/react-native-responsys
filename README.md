@@ -7,11 +7,11 @@ An honest react native project to bridge Oracle Responsys SDK.
 First install this native module:
 
     npm install @juntossomosmais/react-native-responsys
-    
+
 React Native does automatic linking from 0.60 version onwards, but if you're using an older version, then do the following:
 
     react-native link @juntossomosmais/react-native-responsys
-    
+
 ### iOS
 
 TODO.
@@ -21,12 +21,13 @@ TODO.
 If your are using a version older than 0.60, then follow the steps:
 
 1. Insert the following lines inside the dependencies block in `android/app/build.gradle`:
-    ```
-      implementation project(':juntossomosmais_react-native-responsys')
-    ```
+   ```
+     implementation project(':juntossomosmais_react-native-responsys')
+   ```
 2. Open up `android/app/src/main/java/[...]/MainActivity.java`
-  - Add `import br.com.juntossomosmais.reactnative.responsys.RNResponsysBridgePackage;` to the imports at the top of the file
-  - Add `new RNResponsysBridgePackage()` to the list returned by the `getPackages()` method
+
+- Add `import br.com.juntossomosmais.reactnative.responsys.RNResponsysBridgePackage;` to the imports at the top of the file
+- Add `new RNResponsysBridgePackage()` to the list returned by the `getPackages()` method
 
 ---
 
@@ -48,6 +49,11 @@ Add the following in your `AndroidManifest.xml`:
      .....
 ```
 
+### Notification Icon
+
+For Android, you just need to put an icon called `ic_responsys_alt` inside `res/drawable`.
+You can use [this tool](http://romannurik.github.io/AndroidAssetStudio/icons-notification.html#source.type=image&source.space.trim=1&source.space.pad=0&name=ic_notification) to gereate your notification icon
+
 ### Oracle Setup
 
 In order to use it, you must follow Oracle guide to configure either for Android and iOS:
@@ -61,23 +67,26 @@ In case you have multiple push SDKs (sample with Firebase Messaging):
 
 ```javascript
 import firebase from 'react-native-firebase'
-import ResponsysBridge from '@juntossomosmais/react-native-responsys';
+import ResponsysBridge from '@juntossomosmais/react-native-responsys'
 
 const messaging = firebase.messaging()
 
-messaging.getToken().then(token => {
-  ResponsysBridge.configureDeviceToken(token)
-  const useLocation = false
-  ResponsysBridge.registerApp(useLocation)
-}).catch(e => {
-  console.error(`Something went wrong with your setup: ${e}`)
-})
+messaging
+  .getToken()
+  .then((token) => {
+    ResponsysBridge.configureDeviceToken(token)
+    const useLocation = false
+    ResponsysBridge.registerApp(useLocation)
+  })
+  .catch((e) => {
+    console.error(`Something went wrong with your setup: ${e}`)
+  })
 ```
 
 Or simply:
 
 ```javascript
-import ResponsysBridge from '@juntossomosmais/react-native-responsys';
+import ResponsysBridge from '@juntossomosmais/react-native-responsys'
 
 const useLocation = false
 ResponsysBridge.registerApp(useLocation)
@@ -106,7 +115,7 @@ You should use Node v12.13.1
 After downloading this project, you can execute in the root folder:
 
     npm install
-    
+
 After it, using IntelliJ open the folder [android](android) to start to work. For iOS is the same logic, using AppCode open the folder [ios](ios).
 
 ## Important notice
