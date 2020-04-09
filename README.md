@@ -49,6 +49,11 @@ Add the following in your `AndroidManifest.xml`:
      .....
 ```
 
+### Notification Icon
+
+For Android, you just need to put an icon called `ic_responsys_alt` inside `res/drawable`.
+You can use [this tool](http://romannurik.github.io/AndroidAssetStudio/icons-notification.html#source.type=image&source.space.trim=1&source.space.pad=0&name=ic_notification) to gereate your notification icon
+
 ### Oracle Setup
 
 In order to use it, you must follow Oracle guide to configure either for Android and iOS:
