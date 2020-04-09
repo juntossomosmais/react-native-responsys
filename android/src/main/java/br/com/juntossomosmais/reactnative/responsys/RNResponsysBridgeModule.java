@@ -24,6 +24,9 @@ public class RNResponsysBridgeModule extends ReactContextBaseJavaModule {
                     PushIOManager.setLogLevel(Log.VERBOSE);
                 }
                 pushIOManager = PushIOManager.getInstance(getReactApplicationContext());
+
+                Integer notificationIcon = getDrawableId("ic_responsys_alt");
+                pushIOManager.setDefaultSmallIcon(notificationIcon);
             }
         }
         return pushIOManager;
@@ -46,6 +49,11 @@ public class RNResponsysBridgeModule extends ReactContextBaseJavaModule {
             || Build.PRODUCT.contains("vbox86p")
             || Build.PRODUCT.contains("emulator")
             || Build.PRODUCT.contains("simulator");
+    }
+
+    private  int getDrawableId(String name) {
+        String packageName = getReactApplicationContext().getPackageName();
+        return getReactApplicationContext().getResources().getIdentifier(name, "drawable", packageName);
     }
 
     @Override
