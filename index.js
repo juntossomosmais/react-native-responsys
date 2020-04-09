@@ -19,6 +19,9 @@ const ResponsysBridge = {
   retrieveDeviceId: function () {
     return RNResponsysBridge.getDeviceId()
   },
+  retrieveUserId: function () {
+    return RNResponsysBridge.getUserId()
+  },
 }
 
 export default ResponsysBridge

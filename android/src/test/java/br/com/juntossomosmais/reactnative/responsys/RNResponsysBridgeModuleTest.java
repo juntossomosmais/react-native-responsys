@@ -105,4 +105,17 @@ public class RNResponsysBridgeModuleTest {
         verify(mockPushIOManager, times(1)).getDeviceId();
         assertThat(deviceId).isEqualTo(fakeDeviceId);
     }
+    @Test
+    public void shouldRetrieveUserId() {
+        mockStatic(PushIOManager.class);
+        PushIOManager mockPushIOManager = mock(PushIOManager.class);
+        when(PushIOManager.getInstance(any())).thenReturn(mockPushIOManager);
+        String fakeUserId = "fake-user-id";
+        when(mockPushIOManager.getDeviceId()).thenReturn(fakeUserId);
+
+        String deviceId = bridge.getUserId();
+
+        verify(mockPushIOManager, times(1)).getDeviceId();
+        assertThat(deviceId).isEqualTo(fakeUserId);
+    }
 }

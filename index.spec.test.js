@@ -6,8 +6,9 @@ jest.mock('react-native', () => ({
       setDeviceToken: jest.fn(),
       registerApp: jest.fn(),
       getDeviceId: jest.fn(),
-    }
-  }
+      getUserId: jest.fn(),
+    },
+  },
 }))
 
 import { NativeModules } from 'react-native'
@@ -62,4 +63,13 @@ test('Should retrieve device ID', () => {
 
   expect(RNResponsysBridge.getDeviceId).toHaveBeenCalled()
   expect(retrievedDeviceId).toEqual(fakeDeviceId)
+})
+
+test('Should retrieve user ID', () => {
+  const fakeUserId = 'fake-user-id'
+  NativeModules.RNResponsysBridge.getUserId.mockReturnValue(fakeUserId)
+  const retrieveUserId = ResponsysBridge.retrieveUserId()
+
+  expect(RNResponsysBridge.getUserId).toHaveBeenCalled()
+  expect(retrieveUserId).toEqual(fakeUserId)
 })
