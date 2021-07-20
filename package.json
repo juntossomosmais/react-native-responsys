@@ -21,12 +21,12 @@
   "homepage": "https://github.com/juntossomosmais/react-native-responsys#readme",
   "peerDependencies": {
     "react": "^16.12.0",
-    "react-native": "^0.61.5"
+    "react-native": "^0.62.3"
   },
   "devDependencies": {
     "jest": "^25.1.0",
     "metro-react-native-babel-preset": "^0.58.0",
-    "react-native": "^0.61.5"
+    "react-native": "^0.62.3"
   },
   "keywords": [
     "crm",
