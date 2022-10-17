@@ -1,4 +1,7 @@
-# React Native
+# React Native Responsys
+
+
+> DEPRECATED: This repo is deprecated, initially this repo had the goal to create an bridge from oracle responsys to react native, but now oracle released the library as open source. [**`@oracle/pushiomanager-react-native`**](https://github.com/oracle/pushiomanager-react-native).
 
 An honest react native project to bridge Oracle Responsys SDK.
 
